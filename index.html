@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Steam 게임 페이지 메이커</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -23,7 +22,7 @@
 }
 
 body{
-  font-family:'Pretendard',-apple-system,'SF Pro Display','Apple SD Gothic Neo',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR","Segoe UI",Arial,sans-serif;
   background:var(--bg-body);
   min-height:100vh;
   color:var(--text);
@@ -722,22 +721,6 @@ document.getElementById('btnSave').addEventListener('click', async () => {
       logging:         false,
       scrollX:         0,
       scrollY:         0,
-      onclone: (doc) => {
-        // html2canvas는 웹폰트 직접 사용 불가 → 시스템 폰트 강제 주입
-        // 클론된 문서에만 적용되므로 화면에는 영향 없음
-        const s = doc.createElement('style');
-        s.textContent = `
-          * {
-            font-family:
-              "Apple SD Gothic Neo",
-              "Malgun Gothic",
-              "Noto Sans KR",
-              "Noto Sans CJK KR",
-              "Segoe UI", Arial, sans-serif !important;
-          }
-        `;
-        doc.head.appendChild(s);
-      }
     });
 
     const a = document.createElement('a');
