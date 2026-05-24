@@ -516,7 +516,7 @@ button{cursor:pointer;font-family:inherit;}
 <input type="file" id="fileInput" accept="image/*" style="display:none">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 'use strict';
 
@@ -661,55 +661,81 @@ document.getElementById('btnModalX').addEventListener('click',closeCrop);
 document.getElementById('cropModal').addEventListener('click',function(e){if(e.target===this)closeCrop();});
 
 /* ── SAVE ── */
-document.getElementById('btnSave').addEventListener('click',async()=>{
-  const btn    = document.getElementById('btnSave');
-  const page   = document.getElementById('steamPage');
-  const addBtn = document.getElementById('btnAddTag');
+document.getElementById('btnSave').addEventListener('click', async () => {
+  const btn     = document.getElementById('btnSave');
+  const page    = document.getElementById('steamPage');
+  const toolbar = document.querySelector('.toolbar');
+  const outer   = document.querySelector('.outer');
+  const addBtn  = document.getElementById('btnAddTag');
 
   btn.disabled = true;
-  btn.textContent = '⏳ 저장 중...';
+  btn.textContent = '저장 중...';
   document.activeElement?.blur();
+  await new Promise(r => setTimeout(r, 60));
 
-  // UI 전용 요소 숨기기
-  addBtn.style.visibility = 'hidden';
-  const ovEls = page.querySelectorAll('.ov');
-  ovEls.forEach(el => el.style.display = 'none');
+  /* ── 1. padding-bottom → 명시적 px 높이
+     html2canvas가 height:0 + padding-bottom% 를 잘못 계산하는 버그 방지 ── */
+  const heroBox  = page.querySelector('.hero-box');
+  const capBox   = page.querySelector('.cap-box');
+  const thumbEls = [...page.querySelectorAll('.thumb')];
+
+  const hH = heroBox.offsetHeight, cH = capBox.offsetHeight;
+  const tHs = thumbEls.map(t => t.offsetHeight);
+
+  heroBox.style.height = hH + 'px'; heroBox.style.paddingBottom = '0';
+  capBox.style.height  = cH + 'px'; capBox.style.paddingBottom  = '0';
+  thumbEls.forEach((t, i) => { t.style.height = tHs[i] + 'px'; t.style.paddingBottom = '0'; });
+
+  /* ── 2. UI 전용 요소 숨기기 ── */
+  addBtn.style.display = 'none';
+  page.querySelectorAll('.ov').forEach(el => el.style.display = 'none');
   page.querySelectorAll('.editable').forEach(el => {
-    el.style.background  = 'transparent';
-    el.style.boxShadow   = 'none';
+    el.style.background = 'transparent';
+    el.style.boxShadow  = 'none';
   });
 
-  await new Promise(r => setTimeout(r, 120));
+  /* ── 3. 툴바 static 전환 + outer 마진 제거 → steamPage가 top:0 에 위치 ── */
+  toolbar.style.position = 'relative';
+  outer.style.marginTop  = '0';
+  window.scrollTo(0, 0);
 
-  try{
-    // html-to-image: SVG 직렬화 방식 → 스크롤/위치 오프셋 문제 없음
-    const dataUrl = await htmlToImage.toPng(page, {
-      pixelRatio: 2,
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise(r => setTimeout(r, 100));
+  await document.fonts.ready;
+
+  try {
+    const canvas = await html2canvas(page, {
+      useCORS:         true,
+      allowTaint:      false,
       backgroundColor: '#1b2838',
-      skipFonts: true,       // 외부 폰트 CORS 오류 방지 (브라우저 캐시 폰트 사용)
-      cacheBust: true,
-      filter: node => {
-        if(node.id === 'btnAddTag') return false;
-        if(node.classList?.contains('ov')) return false;
-        return true;
-      },
+      scale:           2,
+      logging:         false,
+      scrollX:         0,
+      scrollY:         0,
     });
 
     const a = document.createElement('a');
-    a.download = `steam-page-${new Date().toISOString().slice(0,10)}.png`;
-    a.href = dataUrl;
+    a.download = `steam-page-${new Date().toISOString().slice(0, 10)}.png`;
+    a.href = canvas.toDataURL('image/png');
     a.click();
 
-  }catch(err){
+  } catch (err) {
     console.error(err);
-    alert('저장 오류: ' + (err?.message || String(err) || '알 수 없는 오류'));
-  }finally{
-    addBtn.style.visibility = '';
-    ovEls.forEach(el => el.style.display = '');
+    alert('저장 오류: ' + (err?.message || String(err)));
+  } finally {
+    /* ── 4. 모든 스타일 복원 ── */
+    toolbar.style.position = '';
+    outer.style.marginTop  = '';
+    addBtn.style.display   = '';
+    page.querySelectorAll('.ov').forEach(el => el.style.display = '');
     page.querySelectorAll('.editable').forEach(el => {
       el.style.background = '';
       el.style.boxShadow  = '';
     });
+    heroBox.style.height = ''; heroBox.style.paddingBottom = '';
+    capBox.style.height  = ''; capBox.style.paddingBottom  = '';
+    thumbEls.forEach(t => { t.style.height = ''; t.style.paddingBottom = ''; });
+
     btn.disabled = false;
     btn.innerHTML = 'PNG 저장';
   }
