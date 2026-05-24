@@ -73,9 +73,10 @@ button{cursor:pointer;font-family:inherit;}
 .tb-acts{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 
 .btn{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:7px 16px;border-radius:3px;border:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  height:32px;padding:0 16px;border-radius:3px;border:none;
   font-family:inherit;font-size:12.5px;font-weight:600;
+  line-height:1;
   letter-spacing:.01em;
   transition:filter .15s,opacity .15s;
   white-space:nowrap;
@@ -129,10 +130,11 @@ button{cursor:pointer;font-family:inherit;}
 }
 .hub-btn{
   flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
   background:linear-gradient(180deg,#5b7c8b 5%,#3d5a6b 100%);
   border:1px solid #6a8fa3;
   color:#c5d5e0;
-  padding:6px 14px;border-radius:3px;
+  height:30px;padding:0 14px;border-radius:3px;
   font-size:12px;font-weight:600;
   line-height:1;
   transition:filter .15s;
@@ -269,11 +271,11 @@ button{cursor:pointer;font-family:inherit;}
 .tags-head{font-size:11px;color:var(--text-dim);}
 .tags-list{display:flex;flex-wrap:wrap;gap:5px;}
 .tag{
-  display:inline-block;
+  display:inline-flex;align-items:center;
   background:var(--tag-bg);
   border:1px solid var(--tag-bd);
   color:var(--text);
-  padding:4px 10px;border-radius:2px;
+  height:22px;padding:0 10px;border-radius:2px;
   font-size:11.5px;font-family:inherit;
   line-height:1;
   cursor:text;min-width:10px;
@@ -282,10 +284,11 @@ button{cursor:pointer;font-family:inherit;}
 .tag:hover{border-color:rgba(102,192,244,.5);}
 .tag:focus{border-color:var(--blue);}
 .btn-add-tag{
+  display:inline-flex;align-items:center;
   background:transparent;
   border:1px dashed rgba(76,107,130,.65);
   color:var(--text-dim);
-  padding:3px 10px;border-radius:2px;
+  height:22px;padding:0 10px;border-radius:2px;
   font-size:11px;font-family:inherit;
   line-height:1;
   transition:all .15s;width:fit-content;
@@ -712,13 +715,14 @@ document.getElementById('btnSave').addEventListener('click', async () => {
 
   try {
     const canvas = await html2canvas(page, {
-      useCORS:         true,
-      allowTaint:      false,
-      backgroundColor: '#1b2838',
-      scale:           2,
-      logging:         false,
-      scrollX:         0,
-      scrollY:         0,
+      useCORS:                true,
+      allowTaint:             false,
+      backgroundColor:        '#1b2838',
+      scale:                  2,
+      logging:                false,
+      scrollX:                0,
+      scrollY:                0,
+      foreignObjectRendering: true,
     });
 
     const a = document.createElement('a');
