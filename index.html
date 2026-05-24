@@ -715,14 +715,29 @@ document.getElementById('btnSave').addEventListener('click', async () => {
 
   try {
     const canvas = await html2canvas(page, {
-      useCORS:                true,
-      allowTaint:             false,
-      backgroundColor:        '#1b2838',
-      scale:                  2,
-      logging:                false,
-      scrollX:                0,
-      scrollY:                0,
-      foreignObjectRendering: true,
+      useCORS:         true,
+      allowTaint:      false,
+      backgroundColor: '#1b2838',
+      scale:           2,
+      logging:         false,
+      scrollX:         0,
+      scrollY:         0,
+      onclone: (doc) => {
+        // html2canvas는 웹폰트 직접 사용 불가 → 시스템 폰트 강제 주입
+        // 클론된 문서에만 적용되므로 화면에는 영향 없음
+        const s = doc.createElement('style');
+        s.textContent = `
+          * {
+            font-family:
+              "Apple SD Gothic Neo",
+              "Malgun Gothic",
+              "Noto Sans KR",
+              "Noto Sans CJK KR",
+              "Segoe UI", Arial, sans-serif !important;
+          }
+        `;
+        doc.head.appendChild(s);
+      }
     });
 
     const a = document.createElement('a');
