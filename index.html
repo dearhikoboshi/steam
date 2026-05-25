@@ -118,7 +118,7 @@ button{cursor:pointer;font-family:inherit;}
 /* title row */
 .credit-row{
   display:flex;align-items:center;justify-content:flex-end;
-  gap:6px;margin-bottom:6px;
+  gap:6px;margin-bottom:2px;
 }
 .credit-field{
   font-size:11px;color:#fff;
@@ -439,6 +439,12 @@ button{cursor:pointer;font-family:inherit;}
 <div class="outer">
 <div id="steamPage">
 
+  <!-- Credit Row -->
+  <div class="credit-row">
+    <span class="credit-field" id="creditField" contenteditable="true"></span>
+    <input type="color" class="credit-color" id="creditColor" value="#ffffff" title="글자 색 변경">
+  </div>
+
   <!-- Breadcrumb -->
   <div class="bc">
     <span>모든 게임</span>
@@ -448,12 +454,6 @@ button{cursor:pointer;font-family:inherit;}
     <span class="bc-item editable" contenteditable="true" data-ph="프랜차이즈"></span>
     <span class="bc-sep">&gt;</span>
     <span class="bc-item editable" contenteditable="true" data-ph="게임 이름"></span>
-  </div>
-
-  <!-- Credit Row -->
-  <div class="credit-row">
-    <span class="credit-field" id="creditField" contenteditable="true"></span>
-    <input type="color" class="credit-color" id="creditColor" value="#ffffff" title="글자 색 변경">
   </div>
 
   <!-- Title Row -->
