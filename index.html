@@ -153,6 +153,7 @@ button{cursor:pointer;font-family:inherit;}
 @media(max-width:760px){
   .grid{grid-template-columns:1fr;}
   .media-col{display:none;}
+  .sidebar{display:flex;flex-direction:column;gap:12px;}
 }
 
 /* ── MEDIA COLUMN ── */
@@ -712,10 +713,17 @@ document.getElementById('btnSave').addEventListener('click', async () => {
   try {
     const W = page.offsetWidth;
     const H = page.offsetHeight;
+    const scale = Math.max(window.devicePixelRatio || 1, 2);
     const dataUrl = await domtoimage.toPng(page, {
-      width:  W,
-      height: H,
+      width:  W * scale,
+      height: H * scale,
       bgcolor: '#1b2838',
+      style: {
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+        width:  W + 'px',
+        height: H + 'px',
+      },
       filter: node => {
         if (node.id === 'btnAddTag') return false;
         if (node.classList?.contains('ov')) return false;
