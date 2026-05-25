@@ -129,13 +129,13 @@ button{cursor:pointer;font-family:inherit;}
 }
 .hub-btn{
   flex-shrink:0;
-  display:inline-flex;align-items:center;justify-content:center;
-  -webkit-appearance:none;appearance:none;
+  display:inline-block;
   background:linear-gradient(180deg,#5b7c8b 5%,#3d5a6b 100%);
   border:1px solid #6a8fa3;
   color:#c5d5e0;
-  height:30px;padding:0 14px;border-radius:3px;
+  padding:6px 14px;border-radius:3px;
   font-size:12px;font-weight:600;
+  cursor:pointer;
   transition:filter .15s;
 }
 .hub-btn:hover{filter:brightness(1.15);}
@@ -270,11 +270,11 @@ button{cursor:pointer;font-family:inherit;}
 .tags-head{font-size:11px;color:var(--text-dim);}
 .tags-list{display:flex;flex-wrap:wrap;gap:5px;}
 .tag{
-  display:inline-flex;align-items:center;
+  display:inline-block;
   background:var(--tag-bg);
   border:1px solid var(--tag-bd);
   color:var(--text);
-  height:22px;padding:0 10px;border-radius:2px;
+  padding:4px 10px;border-radius:2px;
   font-size:11.5px;font-family:inherit;
   cursor:text;min-width:10px;
   transition:border-color .15s;
@@ -282,13 +282,13 @@ button{cursor:pointer;font-family:inherit;}
 .tag:hover{border-color:rgba(102,192,244,.5);}
 .tag:focus{border-color:var(--blue);}
 .btn-add-tag{
-  display:inline-flex;align-items:center;
-  -webkit-appearance:none;appearance:none;
+  display:inline-block;
   background:transparent;
   border:1px dashed rgba(76,107,130,.65);
   color:var(--text-dim);
-  height:22px;padding:0 10px;border-radius:2px;
+  padding:3px 10px;border-radius:2px;
   font-size:11px;font-family:inherit;
+  cursor:pointer;
   transition:all .15s;width:fit-content;
 }
 .btn-add-tag:hover{border-color:var(--blue);color:var(--blue);}
@@ -418,7 +418,7 @@ button{cursor:pointer;font-family:inherit;}
   <!-- Title Row -->
   <div class="title-row">
     <h1 class="game-title editable" contenteditable="true" data-ph="게임 제목 입력"></h1>
-    <button class="hub-btn">커뮤니티 허브</button>
+    <span class="hub-btn">커뮤니티 허브</span>
   </div>
 
   <!-- Main Grid -->
@@ -492,7 +492,7 @@ button{cursor:pointer;font-family:inherit;}
       <div class="tags-area">
         <div class="tags-head">이 제품의 인기 태그:</div>
         <div class="tags-list" id="tagsList"></div>
-        <button class="btn-add-tag" id="btnAddTag">+ 태그 추가</button>
+        <span class="btn-add-tag" id="btnAddTag" role="button">+ 태그 추가</span>
       </div>
 
     </div>
@@ -521,7 +521,7 @@ button{cursor:pointer;font-family:inherit;}
 <input type="file" id="fileInput" accept="image/*" style="display:none">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.4.1/dist/dom-to-image-more.min.js"></script>
 <script>
 'use strict';
 
@@ -667,45 +667,15 @@ document.getElementById('cropModal').addEventListener('click',function(e){if(e.t
 
 /* ── SAVE ── */
 document.getElementById('btnSave').addEventListener('click', async () => {
-  const btn     = document.getElementById('btnSave');
-  const page    = document.getElementById('steamPage');
-  const toolbar = document.querySelector('.toolbar');
-  const outer   = document.querySelector('.outer');
-  const addBtn  = document.getElementById('btnAddTag');
+  const btn    = document.getElementById('btnSave');
+  const page   = document.getElementById('steamPage');
+  const addBtn = document.getElementById('btnAddTag');
 
   btn.disabled = true;
   btn.textContent = '저장 중...';
   document.activeElement?.blur();
-  await new Promise(r => setTimeout(r, 60));
 
-  /* ── 1. padding-bottom → 명시적 px 높이
-     html2canvas가 height:0 + padding-bottom% 를 잘못 계산하는 버그 방지 ── */
-  const heroBox  = page.querySelector('.hero-box');
-  const capBox   = page.querySelector('.cap-box');
-  const thumbEls = [...page.querySelectorAll('.thumb')];
-
-  const hH = heroBox.offsetHeight, cH = capBox.offsetHeight;
-  const tHs = thumbEls.map(t => t.offsetHeight);
-
-  heroBox.style.height = hH + 'px'; heroBox.style.paddingBottom = '0';
-  capBox.style.height  = cH + 'px'; capBox.style.paddingBottom  = '0';
-  thumbEls.forEach((t, i) => { t.style.height = tHs[i] + 'px'; t.style.paddingBottom = '0'; });
-
-  /* ── 2. UI 전용 요소 숨기기 + contenteditable 제거
-     (html2canvas가 contenteditable 요소의 line-height를 잘못 계산하는 버그 방지) ── */
-  const ceEls = [...page.querySelectorAll('[contenteditable]')];
-  ceEls.forEach(el => el.removeAttribute('contenteditable'));
-
-  /* 빈 data-ph 요소: ::before 가짜 텍스트를 실제 텍스트로 바꿔 렌더링 안정화 */
-  const phEls = [...page.querySelectorAll('[data-ph]:empty')];
-  phEls.forEach(el => {
-    el.dataset.phSaved = el.getAttribute('data-ph');
-    el.textContent = el.getAttribute('data-ph');
-    el.style.fontStyle = 'italic';
-    el.style.color = 'rgba(143,152,160,.55)';
-    el.removeAttribute('data-ph');
-  });
-
+  /* UI 전용 요소 숨기기 */
   addBtn.style.display = 'none';
   page.querySelectorAll('.ov').forEach(el => el.style.display = 'none');
   page.querySelectorAll('.editable').forEach(el => {
@@ -713,56 +683,39 @@ document.getElementById('btnSave').addEventListener('click', async () => {
     el.style.boxShadow  = 'none';
   });
 
-  /* ── 3. 툴바 static 전환 + outer 마진 제거 → steamPage가 top:0 에 위치 ── */
-  toolbar.style.position = 'relative';
-  outer.style.marginTop  = '0';
-  window.scrollTo(0, 0);
-
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  await new Promise(r => setTimeout(r, 100));
-  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 80));
 
   try {
-    const canvas = await html2canvas(page, {
-      useCORS:         true,
-      allowTaint:      false,
-      backgroundColor: '#1b2838',
-      scale:           2,
-      logging:         false,
-      scrollX:         0,
-      scrollY:         0,
+    /* dom-to-image-more: SVG foreignObject 방식으로 브라우저 엔진이 직접 렌더링
+       → html2canvas와 달리 폰트 baseline 계산을 브라우저가 직접 수행하므로 텍스트 밀림 없음 */
+    const dataUrl = await domtoimage.toPng(page, {
+      width:  page.offsetWidth,
+      height: page.offsetHeight,
+      style: { margin: '0' },
+      bgcolor: '#1b2838',
+      scale: 2,
+      filter: node => {
+        if (node.id === 'btnAddTag') return false;
+        if (node.classList?.contains('ov')) return false;
+        return true;
+      },
     });
 
     const a = document.createElement('a');
     a.download = `steam-page-${new Date().toISOString().slice(0, 10)}.png`;
-    a.href = canvas.toDataURL('image/png');
+    a.href = dataUrl;
     a.click();
 
   } catch (err) {
     console.error(err);
     alert('저장 오류: ' + (err?.message || String(err)));
   } finally {
-    /* ── 4. 모든 스타일 복원 ── */
-    ceEls.forEach(el => el.setAttribute('contenteditable', 'true'));
-    phEls.forEach(el => {
-      el.setAttribute('data-ph', el.dataset.phSaved);
-      el.textContent = '';
-      el.style.fontStyle = '';
-      el.style.color = '';
-      delete el.dataset.phSaved;
-    });
-    toolbar.style.position = '';
-    outer.style.marginTop  = '';
-    addBtn.style.display   = '';
+    addBtn.style.display = '';
     page.querySelectorAll('.ov').forEach(el => el.style.display = '');
     page.querySelectorAll('.editable').forEach(el => {
       el.style.background = '';
       el.style.boxShadow  = '';
     });
-    heroBox.style.height = ''; heroBox.style.paddingBottom = '';
-    capBox.style.height  = ''; capBox.style.paddingBottom  = '';
-    thumbEls.forEach(t => { t.style.height = ''; t.style.paddingBottom = ''; });
-
     btn.disabled = false;
     btn.innerHTML = 'PNG 저장';
   }
