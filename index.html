@@ -154,6 +154,9 @@ button{cursor:pointer;font-family:inherit;}
   .grid{grid-template-columns:1fr;}
   .media-col{display:none;}
   .sidebar{display:flex;flex-direction:column;gap:12px;}
+  .sidebar .desc-field,
+  .sidebar .meta,
+  .sidebar .tags-area{display:none;}
 }
 
 /* ── MEDIA COLUMN ── */
@@ -217,7 +220,8 @@ button{cursor:pointer;font-family:inherit;}
 .thumb-ph{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  color:var(--text-dim);font-size:18px;z-index:1;
+  color:var(--text-dim);font-size:18px;z-index:3;
+  pointer-events:none;
 }
 .thumb img{
   position:absolute;inset:0;
@@ -457,12 +461,12 @@ button{cursor:pointer;font-family:inherit;}
     <div class="sidebar">
 
       <!-- Capsule Art -->
-      <div class="cap-box" onclick="startUp('capsule')" title="캡슐 아트 업로드">
+      <div class="cap-box" onclick="startUp('capsule')" title="썸네일 업로드">
         <div class="cap-ph" id="capPh">
           <div class="ph-ico">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
           </div>
-          <div class="ph-t">캡슐 아트 업로드</div>
+          <div class="ph-t">썸네일 업로드</div>
           <div class="ph-s">460 × 215 추천</div>
         </div>
         <div class="ov">이미지 변경</div>
