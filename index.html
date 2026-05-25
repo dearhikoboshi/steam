@@ -386,8 +386,7 @@ button{cursor:pointer;font-family:inherit;}
 <!-- ══════════ TOOLBAR ══════════ -->
 <div class="toolbar">
   <div class="tb-logo">
-    <svg class="ico" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.979 0C5.678 0 0 5.398 0 11.97c0 5.313 3.434 9.854 8.211 11.487l3.21-8.063a3.978 3.978 0 01-1.178-2.836 4.002 4.002 0 014-4c2.205 0 4 1.795 4 4a4.002 4.002 0 01-4 4c-.09 0-.176-.013-.264-.02l-7.904 3.275C7.577 21.532 9.694 22.5 12 22.5c5.522 0 10-4.477 10-10S17.501 0 11.979 0z"/></svg>
-    <span>Steam 페이지 메이커</span>
+    <span>스팀 페이지 메이커</span>
   </div>
   <div class="tb-tips">
     <div class="tip"><kbd>이미지</kbd> 클릭하여 업로드·크롭</div>
@@ -686,14 +685,20 @@ document.getElementById('btnSave').addEventListener('click', async () => {
   await new Promise(r => setTimeout(r, 80));
 
   try {
-    /* dom-to-image-more: SVG foreignObject 방식으로 브라우저 엔진이 직접 렌더링
-       → html2canvas와 달리 폰트 baseline 계산을 브라우저가 직접 수행하므로 텍스트 밀림 없음 */
+    /* dom-to-image-more: scale을 CSS transform으로 처리해야 레이아웃 유지됨
+       scale 옵션 직접 사용 시 컨테이너 너비가 반토막 나서 텍스트 줄바꿈 발생 */
+    const W = page.offsetWidth;
+    const H = page.offsetHeight;
     const dataUrl = await domtoimage.toPng(page, {
-      width:  page.offsetWidth,
-      height: page.offsetHeight,
-      style: { margin: '0' },
+      width:  W * 2,
+      height: H * 2,
+      style: {
+        transform:       'scale(2)',
+        transformOrigin: 'top left',
+        width:  W + 'px',
+        height: H + 'px',
+      },
       bgcolor: '#1b2838',
-      scale: 2,
       filter: node => {
         if (node.id === 'btnAddTag') return false;
         if (node.classList?.contains('ov')) return false;
