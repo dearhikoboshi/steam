@@ -685,6 +685,23 @@ document.getElementById('btnSave').addEventListener('click', async () => {
     el.style.boxShadow  = 'none';
   });
 
+  /* SVG foreignObject 안에서 white-space:nowrap이 CSS로 안 먹힘
+     → 인라인 스타일 + 픽셀 너비 고정으로 줄바꿈 원천 차단 */
+  const hubBtn = page.querySelector('.hub-btn');
+  const tagEls = [...page.querySelectorAll('.tag')];
+  if (hubBtn) {
+    hubBtn.style.whiteSpace = 'nowrap';
+    hubBtn.style.width      = hubBtn.offsetWidth + 'px';
+    hubBtn.style.minWidth   = hubBtn.offsetWidth + 'px';
+    hubBtn.style.overflow   = 'hidden';
+  }
+  tagEls.forEach(t => {
+    t.style.whiteSpace = 'nowrap';
+    t.style.width      = t.offsetWidth + 'px';
+    t.style.minWidth   = t.offsetWidth + 'px';
+    t.style.overflow   = 'hidden';
+  });
+
   await new Promise(r => setTimeout(r, 80));
 
   try {
@@ -715,6 +732,18 @@ document.getElementById('btnSave').addEventListener('click', async () => {
     page.querySelectorAll('.editable').forEach(el => {
       el.style.background = '';
       el.style.boxShadow  = '';
+    });
+    if (hubBtn) {
+      hubBtn.style.whiteSpace = '';
+      hubBtn.style.width      = '';
+      hubBtn.style.minWidth   = '';
+      hubBtn.style.overflow   = '';
+    }
+    tagEls.forEach(t => {
+      t.style.whiteSpace = '';
+      t.style.width      = '';
+      t.style.minWidth   = '';
+      t.style.overflow   = '';
     });
     btn.disabled = false;
     btn.innerHTML = 'PNG 저장';
