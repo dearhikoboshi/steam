@@ -135,6 +135,7 @@ button{cursor:pointer;font-family:inherit;}
   color:#c5d5e0;
   padding:6px 14px;border-radius:3px;
   font-size:12px;font-weight:600;
+  white-space:nowrap;
   cursor:pointer;
   transition:filter .15s;
 }
@@ -276,6 +277,7 @@ button{cursor:pointer;font-family:inherit;}
   color:var(--text);
   padding:4px 10px;border-radius:2px;
   font-size:11.5px;font-family:inherit;
+  white-space:nowrap;
   cursor:text;min-width:10px;
   transition:border-color .15s;
 }
@@ -288,6 +290,7 @@ button{cursor:pointer;font-family:inherit;}
   color:var(--text-dim);
   padding:3px 10px;border-radius:2px;
   font-size:11px;font-family:inherit;
+  white-space:nowrap;
   cursor:pointer;
   transition:all .15s;width:fit-content;
 }
@@ -685,19 +688,11 @@ document.getElementById('btnSave').addEventListener('click', async () => {
   await new Promise(r => setTimeout(r, 80));
 
   try {
-    /* dom-to-image-more: scale을 CSS transform으로 처리해야 레이아웃 유지됨
-       scale 옵션 직접 사용 시 컨테이너 너비가 반토막 나서 텍스트 줄바꿈 발생 */
     const W = page.offsetWidth;
     const H = page.offsetHeight;
     const dataUrl = await domtoimage.toPng(page, {
-      width:  W * 2,
-      height: H * 2,
-      style: {
-        transform:       'scale(2)',
-        transformOrigin: 'top left',
-        width:  W + 'px',
-        height: H + 'px',
-      },
+      width:  W,
+      height: H,
       bgcolor: '#1b2838',
       filter: node => {
         if (node.id === 'btnAddTag') return false;
