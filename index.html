@@ -436,15 +436,22 @@ button{cursor:pointer;font-family:inherit;}
   margin-top:18px;
 }
 .similar-header{
-  display:flex;align-items:center;justify-content:space-between;
+  position:relative;
+  display:flex;align-items:center;
+  gap:8px;flex-wrap:nowrap;
   margin-bottom:10px;
+  min-height:26px;
 }
 .similar-title{
   font-size:12px;font-weight:600;
   color:var(--text-dim);
   text-transform:uppercase;letter-spacing:.04em;
+  flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  padding-right:80px;
 }
 .similar-viewall{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
   background:linear-gradient(180deg,#5b7c8b 5%,#3d5a6b 100%);
   border:1px solid #6a8fa3;
   color:#c5d5e0;
